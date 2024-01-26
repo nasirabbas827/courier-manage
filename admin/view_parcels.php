@@ -8,9 +8,12 @@ if (!isset($_SESSION["usertype"]) || $_SESSION["usertype"] !== "admin") {
     exit;
 }
 
-// Fetch all parcels with corresponding branch names
-$query = "SELECT Parcels.*, Branches.BranchName FROM Parcels
-          INNER JOIN Branches ON Parcels.BranchID = Branches.BranchID";
+// Fetch all parcels with corresponding branch names and additional information
+$query = "SELECT p.*, b.BranchName AS SenderBranchName, b.ContactNumber AS SenderBranchContactNumber, 
+                  rb.BranchName AS ReceiverBranchName
+          FROM Parcels p
+          INNER JOIN Branches b ON p.BranchID = b.BranchID
+          LEFT JOIN Branches rb ON p.ReceiverBranchID = rb.BranchID";
 $result = mysqli_query($conn, $query);
 
 // Handle parcel deletion if the delete button is clicked
@@ -49,12 +52,15 @@ include('admin_navbar.php');
             <thead>
                 <tr>
                     <th>ParcelID</th>
-                    <th>Branch Name</th>
+                    <th>Sender Branch Name</th>
                     <th>Sender Name</th>
                     <th>Sender Email</th>
+                    <th>Sender Phone</th>
                     <th>Sender Address</th>
+                    <th>Recipient Branch Name</th>
                     <th>Recipient Name</th>
                     <th>Recipient Email</th>
+                    <th>Recipient Phone</th>
                     <th>Recipient Address</th>
                     <th>Weight</th>
                     <th>Date</th>
@@ -70,12 +76,15 @@ include('admin_navbar.php');
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo "<tr>";
                     echo "<td>{$row['ParcelID']}</td>";
-                    echo "<td>{$row['BranchName']}</td>";
+                    echo "<td>{$row['SenderBranchName']}</td>";
                     echo "<td>{$row['SenderName']}</td>";
                     echo "<td>{$row['SenderEmail']}</td>";
+                    echo "<td>{$row['SenderPhone']}</td>";
                     echo "<td>{$row['SenderAddress']}</td>";
+                    echo "<td>{$row['ReceiverBranchName']}</td>";
                     echo "<td>{$row['RecipientName']}</td>";
                     echo "<td>{$row['RecipientEmail']}</td>";
+                    echo "<td>{$row['ReceiverPhone']}</td>";
                     echo "<td>{$row['RecipientAddress']}</td>";
                     echo "<td>{$row['Weight']}</td>";
                     echo "<td>{$row['Date']}</td>";

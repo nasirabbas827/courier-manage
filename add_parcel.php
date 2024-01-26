@@ -22,9 +22,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $senderName = $_POST["senderName"];
     $senderAddress = $_POST["senderAddress"];
     $senderEmail = $_POST["senderEmail"];
+    $senderPhone = $_POST["senderPhone"]; // New
     $recipientName = $_POST["recipientName"];
     $recipientAddress = $_POST["recipientAddress"];
     $recipientEmail = $_POST["recipientEmail"];
+    $recipientPhone = $_POST["recipientPhone"]; // New
     $weight = $_POST["weight"];
     $date = $_POST["date"];
     $time = $_POST["time"];
@@ -32,10 +34,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $status = $_POST["status"];
     $estimatedDeliveryTime = $_POST["estimatedDeliveryTime"];
     $deliveryRequested = isset($_POST["deliveryRequested"]) ? "Yes" : "No";
+    $receiverBranchID = $_POST["receiverBranch"]; // New
 
     // Perform the SQL query to insert data into the Parcels table
-    $parcelQuery = "INSERT INTO Parcels (SenderName, SenderAddress, SenderEmail, RecipientName, RecipientAddress, RecipientEmail, Weight, Date, Time, Amount, Status, EstimatedDeliveryTime, DeliveryRequested, BranchID, UserID) 
-                    VALUES ('$senderName', '$senderAddress', '$senderEmail', '$recipientName', '$recipientAddress', '$recipientEmail', '$weight', '$date', '$time', '$amount', '$status', '$estimatedDeliveryTime', '$deliveryRequested', '$branchID', '$userID')";
+    $parcelQuery = "INSERT INTO Parcels (SenderName, SenderAddress, SenderEmail, SenderPhone, 
+                    RecipientName, RecipientAddress, RecipientEmail, RecipientPhone, 
+                    Weight, Date, Time, Amount, Status, EstimatedDeliveryTime, DeliveryRequested, 
+                    BranchID, UserID, ReceiverBranchID) 
+                    VALUES ('$senderName', '$senderAddress', '$senderEmail', '$senderPhone', 
+                            '$recipientName', '$recipientAddress', '$recipientEmail', '$recipientPhone', 
+                            '$weight', '$date', '$time', '$amount', '$status', '$estimatedDeliveryTime', 
+                            '$deliveryRequested', '$branchID', '$userID', '$receiverBranchID')";
 
     if (mysqli_query($conn, $parcelQuery)) {
         echo "Parcel added successfully ";
@@ -53,16 +62,16 @@ function sendParcelEmail($senderEmail, $recipientEmail, $senderName, $recipientN
     try {
         // Configure the mailer (SMTP settings, etc.)
         // SMTP configuration for Gmail
-       // SMTP configuration
-       $mail->isSMTP();
-       $mail->Host = 'smtp.gmail.com'; // Replace with your SMTP host
-       $mail->SMTPAuth = true;
-       $mail->Username = 'nasiryt.827@gmail.com'; // Replace with your SMTP username
-       $mail->Password = 'zmcrrapmywubsmhk'; // Replace with your SMTP password
-       $mail->Port = 587; // Replace with your SMTP port (usually 587)
+        // SMTP configuration
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com'; // Replace with your SMTP host
+        $mail->SMTPAuth = true;
+        $mail->Username = 'nasiryt.827@gmail.com'; // Replace with your SMTP username
+        $mail->Password = 'zmcrrapmywubsmhk'; // Replace with your SMTP password
+        $mail->Port = 587; // Replace with your SMTP port (usually 587)
 
-       // Send the email
-       $mail->setFrom('nasiryt.827@gmail.com', 'NASIR ABBAS'); // Replace with your Gmail address and name
+        // Send the email
+        $mail->setFrom('nasiryt.827@gmail.com', 'NASIR ABBAS'); // Replace with your Gmail address and name
         $mail->addAddress($senderEmail, $senderName);
         $mail->addAddress($recipientEmail, $recipientName);
         $mail->Subject = 'Parcel Information';
@@ -96,114 +105,135 @@ function sendParcelEmail($senderEmail, $recipientEmail, $senderName, $recipientN
 <?php
 include('navbar.php');
 ?>
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
     <h2 class="text-center">Add Parcel</h2>
 
-  <!-- Form for adding parcels with responsive layout -->
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="senderName">Sender Name:</label>
-                <input type="text" class="form-control" id="senderName" name="senderName" required>
+    <!-- Form for adding parcels with responsive layout -->
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <div class="row">
+            <!-- Sender Information -->
+            <div class="col-md-6">
+                <h3>Sender Information</h3>
+                <div class="form-group">
+                    <label for="senderName">Sender Name:</label>
+                    <input type="text" class="form-control" id="senderName" name="senderName" required>
+                </div>
+                <div class="form-group">
+                    <label for="senderAddress">Sender Address:</label>
+                    <input type="text" class="form-control" id="senderAddress" name="senderAddress" required>
+                </div>
+                <div class="form-group">
+                    <label for="senderEmail">Sender Email:</label>
+                    <input type="email" class="form-control" id="senderEmail" name="senderEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="senderPhone">Sender Phone:</label>
+                    <input type="tel" class="form-control" id="senderPhone" name="senderPhone" required>
+                </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="senderAddress">Sender Address:</label>
-                <input type="text" class="form-control" id="senderAddress" name="senderAddress" required>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="senderEmail">Sender Email:</label>
-                <input type="email" class="form-control" id="senderEmail" name="senderEmail" required>
-            </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="recipientName">Recipient Name:</label>
-                <input type="text" class="form-control" id="recipientName" name="recipientName" required>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="recipientAddress">Recipient Address:</label>
-                <input type="text" class="form-control" id="recipientAddress" name="recipientAddress" required>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="recipientEmail">Recipient Email:</label>
-                <input type="email" class="form-control" id="recipientEmail" name="recipientEmail" required>
-            </div>
-        </div>
-    </div>
+            <!-- Receiver Information -->
+            <div class="col-md-6">
+                <h3>Receiver Information</h3>
+                <div class="form-group">
+                    <label for="recipientName">Recipient Name:</label>
+                    <input type="text" class="form-control" id="recipientName" name="recipientName" required>
+                </div>
+                <div class="form-group">
+                    <label for="recipientAddress">Recipient Address:</label>
+                    <input type="text" class="form-control" id="recipientAddress" name="recipientAddress" required>
+                </div>
+                <div class="form-group">
+                    <label for="recipientEmail">Recipient Email:</label>
+                    <input type="email" class="form-control" id="recipientEmail" name="recipientEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="recipientPhone">Recipient Phone:</label>
+                    <input type="tel" class="form-control" id="recipientPhone" name="recipientPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="receiverBranch">Receiver Branch:</label>
+                    <select class="form-control" id="receiverBranch" name="receiverBranch" required>
+                        <?php
+                        // Fetch branches from the database and populate the dropdown
+                        $branchQuery = "SELECT BranchID, BranchName FROM Branches";
+                        $result = mysqli_query($conn, $branchQuery);
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="weight">Weight:</label>
-                <input type="text" class="form-control" id="weight" name="weight" required>
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<option value='" . $row['BranchID'] . "'>" . $row['BranchName'] . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="date">Date:</label>
-                <input type="date" class="form-control" id="date" name="date" required>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="time">Time:</label>
-                <input type="time" class="form-control" id="time" name="time" required>
-            </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="amount">Amount:</label>
-                <input type="number" class="form-control" id="amount" name="amount" required>
+        <!-- Additional Parcel Information -->
+        <h3>Additional Parcel Information</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="weight">Weight:</label>
+                    <input type="text" class="form-control" id="weight" name="weight" required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input type="date" class="form-control" id="date" name="date" required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="time">Time:</label>
+                    <input type="time" class="form-control" id="time" name="time" required>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="status">Status:</label>
-                <select class="form-control" id="status" name="status" required>
-                    <option value="In Transit">In Transit</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Delayed">Delayed</option>
-                    <option value="Returned">Returned</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="estimatedDeliveryTime">Estimated Delivery Time (days):</label>
-                <input type="number" class="form-control" id="estimatedDeliveryTime" name="estimatedDeliveryTime" required>
-            </div>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-check">
-                <input type="checkbox" class=" mt-3 form-check-input" id="deliveryRequested" name="deliveryRequested">
-                <label class=" mt-3 form-check-label" for="deliveryRequested">Delivery Requested</label>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="number" class="form-control" id="amount" name="amount" required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select class="form-control" id="status" name="status" required>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Delayed">Delayed</option>
+                        <option value="Returned">Returned</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="estimatedDeliveryTime">Estimated Delivery Time (days):</label>
+                    <input type="number" class="form-control" id="estimatedDeliveryTime" name="estimatedDeliveryTime" required>
+                </div>
             </div>
         </div>
-        <div class="col-md-8">
-            <button type="submit" class="btn btn-primary float-right">Add Parcel</button>
-        </div>
-    </div>
-</form>
 
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-check">
+                    <input type="checkbox" class=" mt-3 form-check-input" id="deliveryRequested" name="deliveryRequested">
+                    <label class=" mt-3 form-check-label" for="deliveryRequested">Delivery Requested</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="row">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary float-right">Add Parcel</button>
+            </div>
+        </div>
+    </form>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

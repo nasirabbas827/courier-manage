@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 01, 2024 at 09:13 AM
+-- Generation Time: Jan 26, 2024 at 10:53 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -59,7 +59,8 @@ CREATE TABLE `branches` (
 --
 
 INSERT INTO `branches` (`BranchID`, `BranchName`, `Location`, `ContactPerson`, `ContactNumber`) VALUES
-(1, 'Jampur Branch', 'Jampur', 'Haider Ali', '0312055562');
+(1, 'Jampur Branch', 'Jampur', 'Haider Ali', '0312055562'),
+(2, 'Multan Branch', 'Multan', 'Asad', '0312055');
 
 -- --------------------------------------------------------
 
@@ -82,7 +83,7 @@ CREATE TABLE `messages` (
 --
 
 INSERT INTO `messages` (`id`, `sender_id`, `receiver_id`, `message_text`, `sent_datetime`, `reply_text`, `reply_datetime`) VALUES
-(4, 1, 0, 'Hello', '2024-01-01 13:11:10', NULL, NULL);
+(4, 1, 0, 'Hello', '2024-01-01 13:11:10', 'Yes', '2024-01-01 13:40:31');
 
 -- --------------------------------------------------------
 
@@ -106,17 +107,22 @@ CREATE TABLE `parcels` (
   `BranchID` int(11) NOT NULL,
   `UserID` int(11) NOT NULL,
   `SenderEmail` varchar(255) NOT NULL,
-  `RecipientEmail` varchar(255) NOT NULL
+  `RecipientEmail` varchar(255) NOT NULL,
+  `SenderPhone` varchar(20) DEFAULT NULL,
+  `ReceiverPhone` varchar(20) DEFAULT NULL,
+  `ReceiverBranchID` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `parcels`
 --
 
-INSERT INTO `parcels` (`ParcelID`, `SenderName`, `SenderAddress`, `RecipientName`, `RecipientAddress`, `Weight`, `Date`, `Time`, `Amount`, `Status`, `EstimatedDeliveryTime`, `DeliveryRequested`, `BranchID`, `UserID`, `SenderEmail`, `RecipientEmail`) VALUES
-(2, 'Husan', 'BAsti Cheena', 'ALi', 'Multan', 2.00, '2024-01-01', '12:19:00', 300.00, 'In Transit', 3, 'Yes', 1, 1, 'nasiryt.827@gmail.com', 'saifx280@gmail.com'),
-(3, 'Husan', 'BAsti Cheena', 'ALi', 'Multan', 2.00, '2024-01-01', '12:19:00', 300.00, 'In Transit', 3, 'Yes', 1, 1, 'nasiryt.827@gmail.com', 'saifx280@gmail.com'),
-(4, 'Husan', 'BAsti Cheena', 'ALi', 'Multan', 2.00, '2024-01-01', '12:19:00', 300.00, 'In Transit', 3, 'Yes', 1, 1, 'nasiryt.827@gmail.com', 'saifx280@gmail.com');
+INSERT INTO `parcels` (`ParcelID`, `SenderName`, `SenderAddress`, `RecipientName`, `RecipientAddress`, `Weight`, `Date`, `Time`, `Amount`, `Status`, `EstimatedDeliveryTime`, `DeliveryRequested`, `BranchID`, `UserID`, `SenderEmail`, `RecipientEmail`, `SenderPhone`, `ReceiverPhone`, `ReceiverBranchID`) VALUES
+(2, 'Husan', 'BAsti Cheena', 'ALi', 'Multan', 2.00, '2024-01-01', '12:19:00', 300.00, 'In Transit', 3, 'Yes', 1, 1, 'nasiryt.827@gmail.com', 'saifx280@gmail.com', NULL, NULL, 1),
+(3, 'Husan', 'BAsti Cheena', 'ALi', 'Multan', 2.00, '2024-01-01', '12:19:00', 300.00, 'In Transit', 3, 'Yes', 1, 1, 'nasiryt.827@gmail.com', 'saifx280@gmail.com', NULL, NULL, 1),
+(4, 'Husan', 'BAsti Cheena', 'ALi', 'Multan', 2.00, '2024-01-01', '12:19:00', 300.00, 'In Transit', 3, 'Yes', 1, 1, 'nasiryt.827@gmail.com', 'saifx280@gmail.com', NULL, NULL, 1),
+(5, 'Nasir Abbas', 'BAsti Cheena', 'ALi', 'Multan', 2.00, '2024-01-01', '13:25:00', 300.00, 'In Transit', 3, 'Yes', 2, 2, 'nasiryt.827@gmail.com', 'saifx280@gmail.com', NULL, NULL, 1),
+(6, 'Asad Ali', 'BAsti Cheena', 'ALi', 'Multan', 2.00, '2024-01-01', '13:41:00', 300.00, 'In Transit', 3, 'Yes', 2, 2, 'nasiryt.827@gmail.com', 'saifx280@gmail.com', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -139,7 +145,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `BranchID`, `Username`, `Password`, `Name`, `Email`, `Phone`) VALUES
-(1, 1, 'Nasir12', '$2y$10$zaokJmoHIOMEc7gwGV5oQuLlxuSgOD91pn9sHfGl4PVMoaNpXbBIq', 'NASIR ABBAS', 'nasiryt.827@gmail.com', '3176526827');
+(1, 1, 'Nasir12', '$2y$10$zaokJmoHIOMEc7gwGV5oQuLlxuSgOD91pn9sHfGl4PVMoaNpXbBIq', 'NASIR ABBAS', 'nasiryt.827@gmail.com', '3176526827'),
+(2, 2, 'Ml12', '$2y$10$/7SlUyKbyUdF10XU1uNk..83E/d70ECG9i3D4WsEhrLCEviNwF6Fu', 'Multan Owner', 'ml@gmail.com', '03176526827');
 
 --
 -- Indexes for dumped tables
@@ -192,25 +199,25 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `branches`
 --
 ALTER TABLE `branches`
-  MODIFY `BranchID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `BranchID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `parcels`
 --
 ALTER TABLE `parcels`
-  MODIFY `ParcelID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ParcelID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables

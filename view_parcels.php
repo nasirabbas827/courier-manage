@@ -10,8 +10,11 @@ if (!isset($_SESSION["user_id"])) {
 
 $userID = $_SESSION["user_id"];
 
-// Fetch parcels added by the logged-in user
-$query = "SELECT * FROM Parcels WHERE UserID = $userID";
+// Fetch parcels with additional information
+$query = "SELECT p.*, b.BranchName, b.ContactNumber AS BranchContactNumber 
+          FROM Parcels p 
+          LEFT JOIN Branches b ON p.ReceiverBranchID = b.BranchID 
+          WHERE UserID = $userID";
 $result = mysqli_query($conn, $query);
 
 // Handle parcel deletion if the delete button is clicked
@@ -54,16 +57,21 @@ include('navbar.php');
                     <th>ParcelID</th>
                     <th>Sender Name</th>
                     <th>Sender Email</th>
+                    <th>Sender Phone</th>
                     <th>Sender Address</th>
                     <th>Recipient Name</th>
                     <th>Recipient Email</th>
+                    <th>Recipient Phone</th>
                     <th>Recipient Address</th>
                     <th>Weight</th>
                     <th>Date</th>
                     <th>Time</th>
                     <th>Amount</th>
                     <th>Status</th>
-                    <th>Estimated Delivery Time ( Days )</th>
+                    <th>Estimated Delivery Time (Days)</th>
+                    <th>Delivery Requested</th>
+                    <th>Recipient Branch</th>
+                    <th>Branch Contact Number</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -74,9 +82,11 @@ include('navbar.php');
                     echo "<td>{$row['ParcelID']}</td>";
                     echo "<td>{$row['SenderName']}</td>";
                     echo "<td>{$row['SenderEmail']}</td>";
+                    echo "<td>{$row['SenderPhone']}</td>";
                     echo "<td>{$row['SenderAddress']}</td>";
                     echo "<td>{$row['RecipientName']}</td>";
                     echo "<td>{$row['RecipientEmail']}</td>";
+                    echo "<td>{$row['ReceiverPhone']}</td>";
                     echo "<td>{$row['RecipientAddress']}</td>";
                     echo "<td>{$row['Weight']}</td>";
                     echo "<td>{$row['Date']}</td>";
@@ -84,6 +94,9 @@ include('navbar.php');
                     echo "<td>{$row['Amount']}</td>";
                     echo "<td>{$row['Status']}</td>";
                     echo "<td>{$row['EstimatedDeliveryTime']}</td>";
+                    echo "<td>{$row['DeliveryRequested']}</td>";
+                    echo "<td>{$row['BranchName']}</td>";
+                    echo "<td>{$row['BranchContactNumber']}</td>";
                     echo "<td>
                             <a href='edit_parcel.php?id={$row['ParcelID']}' class='mb-2 btn btn-primary'>Edit</a>
                             <a href='view_parcels.php?delete_id={$row['ParcelID']}' class='btn btn-danger' onclick='return confirm(\"Are you sure you want to delete this parcel?\")'>Delete</a>
