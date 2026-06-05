@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     Name = '$newName',
                     Email = '$newEmail',
                     Phone = '$newPhone',
-                    Password = '$newPassword'
+                    Password = "YOUR_OWN_API_KEY"
                     WHERE UserID = $userID";
 
     if (mysqli_query($conn, $updateQuery)) {
